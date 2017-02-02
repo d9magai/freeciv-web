@@ -31,7 +31,7 @@ echo "================================="
 # if Freeciv-web already built with Vagrant, then start it instead.
 if [ -f "/vagrant/freeciv-web/target/freeciv-web.war" ]; then
   printf "\n\nFreeciv-web already built, starting it.\n\n-----";
-  cd ${basedir}/scripts/ && sudo -H -u ubuntu ./start-freeciv-web.sh
+  cd ${basedir}/scripts/ && sudo -H -u vagrant ./start-freeciv-web.sh
   printf "Freeciv-web started. Now login with 'vagrant ssh' and point your browser to http://localhost";
   exit 0;
 fi
@@ -48,7 +48,7 @@ tornado_url="https://github.com/tornadoweb/tornado/archive/v4.4.1.tar.gz"
 casperjs_url="https://github.com/casperjs/casperjs/zipball/1.1.3"
 
 # Based on fresh install of Ubuntu 16.04
-dependencies="maven mysql-server openjdk-8-jdk-headless libcurl4-openssl-dev nginx libjansson-dev subversion pngcrush python3-pillow libtool automake autoconf autotools-dev language-pack-en python-minimal python3.6-dev python3-setuptools libbz2-dev imagemagick python3-pip dos2unix liblzma-dev xvfb libicu-dev pkg-config zlib1g-dev libsdl1.2-dev tomcat8 tomcat8-admin php7.0-common php7.0-cli php7.0-fpm php7.0-mysql unzip phantomjs zip"
+dependencies="maven mysql-server openjdk-8-jdk-headless libcurl4-openssl-dev nginx libjansson-dev subversion pngcrush python3-pillow libtool automake autoconf autotools-dev language-pack-en python-minimal python3.5-dev python3-setuptools libbz2-dev imagemagick python3-pip dos2unix liblzma-dev xvfb libicu-dev pkg-config zlib1g-dev libsdl1.2-dev tomcat8 tomcat8-admin php7.0-common php7.0-cli php7.0-fpm php7.0-mysql unzip phantomjs zip"
 
 ## Setup
 mkdir -p ${basedir}
@@ -103,17 +103,17 @@ sed -e "s/MYSQL_USER=root/MYSQL_USER=${mysql_user}/" -e "s/MYSQL_PASSWORD=change
 
 echo "==== Building freeciv ===="
 dos2unix ${basedir}/freeciv/freeciv-web.project
-cd ${basedir}/freeciv && sudo -Hu ubuntu ./prepare_freeciv.sh
-cd freeciv && sudo -u ubuntu make install
+cd ${basedir}/freeciv && sudo -Hu vagrant ./prepare_freeciv.sh
+cd freeciv && sudo -u vagrant make install
 
 echo "==== Building freeciv-web ===="
 cd ${basedir}/scripts/freeciv-img-extract/ && ./setup_links.sh && ./sync.sh
 cd /var/lib/tomcat8 && chmod -R 777 webapps logs && setfacl -d -m g::rwx webapps && chown -R www-data:www-data webapps/
 cp ${basedir}/freeciv-web/src/main/webapp/WEB-INF/config.properties.dist ${basedir}/freeciv-web/src/main/webapp/WEB-INF/config.properties
 cd ${basedir}/scripts && ./sync-js-hand.sh
-cd ${basedir}/freeciv-web && sudo -u ubuntu ./setup.sh
+cd ${basedir}/freeciv-web && sudo -u vagrant ./setup.sh
 cp flyway.properties.dist flyway.properties
-sudo -u ubuntu mvn compile flyway:migrate
+sudo -u vagrant mvn compile flyway:migrate
 
 echo "=============================="
 
@@ -126,12 +126,12 @@ cp ${basedir}/publite2/nginx.conf /etc/nginx/
 
 # add Freeciv-web scripts to path
 export PATH=$PATH:/vagrant/scripts
-echo 'export PATH=$PATH:/vagrant/scripts' >> /home/ubuntu/.bashrc
+echo 'export PATH=$PATH:/vagrant/scripts' >> /home/vagrant/.bashrc
 
 if [ -d "/vagrant/" ]; then
   echo "Starting Freeciv-web..."
   service nginx start
-  cd ${basedir}/scripts/ && sudo -Hu ubuntu ./start-freeciv-web.sh
+  cd ${basedir}/scripts/ && sudo -Hu vagrant ./start-freeciv-web.sh
 else
   echo "Freeciv-web installed. Please start it manually."
 fi
