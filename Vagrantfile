@@ -19,11 +19,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "ubuntu-yakkety"
+  config.vm.box = "bento/ubuntu-16.04"
 
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  config.vm.box_url = "https://cloud-images.ubuntu.com/yakkety/current/yakkety-server-cloudimg-amd64-vagrant.box"
+  #config.vm.box_url = "https://cloud-images.ubuntu.com/yakkety/current/yakkety-server-cloudimg-amd64-vagrant.box"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -32,14 +32,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # port 80 on the guest machine. Se README for creating a SSH tunnel for
   # Linux and OS X on port 80.
   if Vagrant::Util::Platform.windows?
-    config.vm.network :forwarded_port, guest: 80, host: 80
-    config.vm.network :forwarded_port, guest: 443, host: 443
+    config.vm.network :forwarded_port, guest: 8080, host: 8080
+    config.vm.network :forwarded_port, guest: 4431, host: 4431
   else 
     config.vm.network :forwarded_port, guest: 80, host: 8080
   end
 
-  config.vm.provider "virtualbox" do |v|
-    v.cpus = "1"
+  config.vm.provider "vmware_workstation" do |v|
+    v.gui = true
+    v.cpus = "4"
     host = RbConfig::CONFIG['host_os']
 
     # Give VM 2/3 system memory 
