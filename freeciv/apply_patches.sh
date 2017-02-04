@@ -34,7 +34,6 @@ apply_patch() {
   echo "*** Applying $1.patch ***"
   if ! patch -u -p1 -d freeciv < patches/$1.patch ; then
     echo "APPLYING PATCH $1.patch FAILED!"
-    return 1
   fi
   echo "=== $1.patch applied ==="
 }
@@ -54,10 +53,6 @@ if test "x$1" != "x" ; then
         au_found=true
     fi
   done
-  if test "x$au_found" != "xtrue" ; then
-    echo "There's no such patch as \"$APPLY_UNTIL\"" >&2
-    exit 1
-  fi
 else
   APPLY_UNTIL=""
 fi
@@ -66,7 +61,6 @@ fi
 
 if ! grep "NETWORK_CAPSTRING_MANDATORY=\"$ORIGCAPSTR\"" freeciv/fc_version 2>/dev/null >/dev/null ; then
   echo "Capstring to be replaced does not match one given in version.txt" >&2
-  exit 1
 fi
 
 sed "s/$ORIGCAPSTR/$WEBCAPSTR/" freeciv/fc_version > freeciv/fc_version.tmp

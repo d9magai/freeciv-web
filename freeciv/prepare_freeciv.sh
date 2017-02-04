@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eux
 
+if [[ ! -f /etc/prepare_freeciv ]]; then
+
 if test "x$(dirname $0)" != "x." ; then
   echo "Currently this script must be run on its own directory" >&2
   exit 1
@@ -23,7 +25,10 @@ if ! sh $FC_DL $FCREV $FCBRANCH ; then
   exit 1
 fi
 
-if ! ./apply_patches.sh ; then
+date > /etc/prepare_freeciv
+fi
+
+if ! ./apply_patches.sh patches ; then
   echo "Patching failed" >&2
   exit 1
 fi
