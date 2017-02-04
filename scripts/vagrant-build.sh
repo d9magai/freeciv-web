@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # Freeciv-web Vagrant Bootstrap Script - play.freeciv.org 
 # 2014-02-17 - Andreas Røsdal

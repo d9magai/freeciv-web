@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eux
 
 # Freeciv server version upgrade notes
 # ------------------------------------

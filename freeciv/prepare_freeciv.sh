@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eux
 
 if test "x$(dirname $0)" != "x." ; then
   echo "Currently this script must be run on its own directory" >&2
