@@ -7,6 +7,8 @@
 # This script assumes that the source code in git has been checked out from
 # https://github.com/freeciv/freeciv-web to /vagrant 
 
+user="vagrant"
+
 if [ -d "/vagrant/" ]; then
   # script is run to install Freeciv-web under vagrant
   basedir="/vagrant"
@@ -31,7 +33,7 @@ echo "================================="
 # if Freeciv-web already built with Vagrant, then start it instead.
 if [ -f "/vagrant/freeciv-web/target/freeciv-web.war" ]; then
   printf "\n\nFreeciv-web already built, starting it.\n\n-----";
-  cd ${basedir}/scripts/ && sudo -H -u ubuntu ./start-freeciv-web.sh
+  cd ${basedir}/scripts/ && sudo -H -u $user ./start-freeciv-web.sh
   printf "Freeciv-web started. Now login with 'vagrant ssh' and point your browser to http://localhost";
   exit 0;
 fi
@@ -90,7 +92,7 @@ echo "==== Setting up MySQL ===="
 mysqladmin -u ${mysql_user} -p${mysql_pass} create freeciv_web
 cd ${basedir}/freeciv-web
 cp flyway.properties.dist flyway.properties
-sudo -u ubuntu mvn compile flyway:migrate
+sudo -u $user mvn compile flyway:migrate
 cd -
 
 # configuration files
@@ -105,15 +107,15 @@ sed -e "s/MYSQL_USER=root/MYSQL_USER=${mysql_user}/" -e "s/MYSQL_PASSWORD=change
 
 echo "==== Building freeciv ===="
 dos2unix ${basedir}/freeciv/freeciv-web.project
-cd ${basedir}/freeciv && sudo -Hu ubuntu ./prepare_freeciv.sh
-cd freeciv && sudo -u ubuntu make install
+cd ${basedir}/freeciv && sudo -Hu $user ./prepare_freeciv.sh
+cd freeciv && sudo -u $user make install
 
 echo "==== Building freeciv-web ===="
 cd ${basedir}/scripts/freeciv-img-extract/ && ./setup_links.sh && ./sync.sh
 cd /var/lib/tomcat8 && chmod -R 777 webapps logs && setfacl -d -m g::rwx webapps && chown -R www-data:www-data webapps/
 cp ${basedir}/freeciv-web/src/main/webapp/WEB-INF/config.properties.dist ${basedir}/freeciv-web/src/main/webapp/WEB-INF/config.properties
 cd ${basedir}/scripts && ./sync-js-hand.sh
-cd ${basedir}/freeciv-web && sudo -u ubuntu ./setup.sh
+cd ${basedir}/freeciv-web && sudo -u $user ./setup.sh
 
 echo "=============================="
 
@@ -125,12 +127,12 @@ cp ${basedir}/publite2/nginx.conf /etc/nginx/
 
 # add Freeciv-web scripts to path
 export PATH=$PATH:/vagrant/scripts
-echo 'export PATH=$PATH:/vagrant/scripts' >> /home/ubuntu/.bashrc
+echo 'export PATH=$PATH:/vagrant/scripts' >> /home/$user/.bashrc
 
 if [ -d "/vagrant/" ]; then
   echo "Starting Freeciv-web..."
   service nginx start
-  cd ${basedir}/scripts/ && sudo -Hu ubuntu ./start-freeciv-web.sh
+  cd ${basedir}/scripts/ && sudo -Hu $user ./start-freeciv-web.sh
 else
   echo "Freeciv-web installed. Please start it manually."
 fi
