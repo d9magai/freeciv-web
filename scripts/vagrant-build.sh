@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eux
 
 # Freeciv-web Vagrant Bootstrap Script - play.freeciv.org 
 # 2014-02-17 - Andreas Røsdal
@@ -50,32 +51,15 @@ tornado_url="https://github.com/tornadoweb/tornado/archive/v4.4.1.tar.gz"
 casperjs_url="https://github.com/casperjs/casperjs/zipball/1.1.3"
 
 # Based on fresh install of Ubuntu 16.04
-dependencies="maven mysql-server openjdk-8-jdk-headless libcurl4-openssl-dev nginx libjansson-dev subversion pngcrush python3-pillow libtool automake autoconf autotools-dev language-pack-en python-minimal python3.6-dev python3-setuptools libbz2-dev imagemagick python3-pip dos2unix liblzma-dev xvfb libicu-dev pkg-config zlib1g-dev libsdl1.2-dev tomcat8 tomcat8-admin unzip phantomjs zip"
+dependencies="maven"
 
 ## Setup
 mkdir -p ${basedir}
 cd ${basedir}
 
-## dependencies
-echo "==== Installing Updates and Dependencies ===="
-export DEBIAN_FRONTEND=noninteractive
-apt-mark hold firefox
-echo "apt-get update"
-apt-get -y update
-echo "apt-get upgrade"
-apt-get -y upgrade
-echo "mysql setup..."
 debconf-set-selections <<< "mysql-server mysql-server/root_password password ${mysql_pass}"
 debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${mysql_pass}"
 echo "apt-get install dependencies"
-apt-get -y install ${dependencies}
-
-echo "==== Fetching/Installing Tornado Web Server ===="
-cd /tmp
-wget ${tornado_url}
-tar xvfz v4.4.1.tar.gz
-cd tornado-4.4.1
-python3 setup.py install
 
 pip3 install wikipedia
 
@@ -85,7 +69,6 @@ wget https://github.com/mysql/mysql-connector-python/archive/2.1.3.zip
 unzip 2.1.3.zip
 cd mysql-connector-python-2.1.3
 python3 setup.py install
-
 
 ## mysql setup
 echo "==== Setting up MySQL ===="

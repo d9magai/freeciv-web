@@ -15,9 +15,9 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   Encoding.default_external = 'UTF-8'
+  config.omnibus.chef_version = :latest
   config.vm.box = "bento/ubuntu-16.04"
   config.vm.provider "vmware_workstation" do |v|
-    v.gui = true
     v.customize ["modifyvm", :id, "--memory", "4096", "--cpus", "2", "--ioapic", "on"]
   end
 end

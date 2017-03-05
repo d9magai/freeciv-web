@@ -1,0 +1,7 @@
+DEPENDENCIES
+  apt
+  mysql
+
+GRAPH
+  apt (6.0.1)
+  mysql (8.2.0)
