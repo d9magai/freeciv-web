@@ -6,7 +6,6 @@
   gnome-terminal
   firefox
   maven
-  mysql-server
   openjdk-8-jdk-headless
   libcurl4-openssl-dev
   nginx
@@ -24,6 +23,7 @@
   python3-setuptools
   libbz2-dev
   imagemagick
+  libmagickcore-6.q16-2-extra
   python3-pip
   dos2unix
   liblzma-dev
