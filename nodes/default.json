@@ -1,16 +1,14 @@
 {
   "run_list": [
     "recipe[apt]",
+    "recipe[packages]",
+    "recipe[mypython]",
     "recipe[db]"
   ],
-    "mysql":{
-    "service_name":"default",
-    "version":"5.7",
-    "port":"3306",
-    "server_root_password":"vagrant",
-    "remove_anonymous_users":true,
-        "remove_test_database":true
-    },
+  "python" : {
+    "install_method" : "package",
+    "version" : "3.5.2"
+  },
   "automatic": {
     "ipaddress": "default"
   }

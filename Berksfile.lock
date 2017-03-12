@@ -1,7 +1,42 @@
 DEPENDENCIES
   apt
+  database
   mysql
+  mysql2_chef_gem
+  python
 
 GRAPH
   apt (6.0.1)
+  build-essential (8.0.0)
+    mingw (>= 1.1)
+    seven_zip (>= 0.0.0)
+  compat_resource (12.16.3)
+  database (6.1.1)
+    postgresql (>= 1.0.0)
+  mariadb (1.0.1)
+    apt (>= 0.0.0)
+    yum (>= 0.0.0)
+    yum-epel (>= 0.0.0)
+  mingw (2.0.0)
+    seven_zip (>= 0.0.0)
   mysql (8.2.0)
+  mysql2_chef_gem (1.1.0)
+    build-essential (>= 0.0.0)
+    mariadb (>= 0.0.0)
+    mysql (>= 6.0)
+  ohai (5.0.0)
+  openssl (6.1.1)
+  postgresql (6.1.0)
+    build-essential (>= 2.0.0)
+    compat_resource (>= 12.16.3)
+    openssl (>= 4.0)
+  python (1.4.6)
+    build-essential (>= 0.0.0)
+    yum-epel (>= 0.0.0)
+  seven_zip (2.0.2)
+    windows (>= 1.2.2)
+  windows (2.1.1)
+    ohai (>= 4.0.0)
+  yum (5.0.0)
+  yum-epel (2.1.1)
+    compat_resource (>= 12.16.3)

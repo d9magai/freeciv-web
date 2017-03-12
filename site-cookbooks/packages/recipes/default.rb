@@ -12,19 +12,14 @@
   libjansson-dev
   subversion
   pngcrush
-  python3-pillow
   libtool
   automake
   autoconf
   autotools-dev
   language-pack-en
-  python-minimal
-  python3.5-dev
-  python3-setuptools
   libbz2-dev
   imagemagick
   libmagickcore-6.q16-2-extra
-  python3-pip
   dos2unix
   liblzma-dev
   xvfb
