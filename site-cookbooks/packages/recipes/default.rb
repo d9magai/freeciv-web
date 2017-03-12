@@ -13,6 +13,11 @@
   subversion
   pngcrush
   libtool
+  python3-pillow
+  python-minimal
+  python3.5-dev
+  python3-setuptools
+  python3-pip
   automake
   autoconf
   autotools-dev

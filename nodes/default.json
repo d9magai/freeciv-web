@@ -2,13 +2,9 @@
   "run_list": [
     "recipe[apt]",
     "recipe[packages]",
-    "recipe[mypython]",
+    "recipe[pip]",
     "recipe[db]"
   ],
-  "python" : {
-    "install_method" : "package",
-    "version" : "3.5.2"
-  },
   "automatic": {
     "ipaddress": "default"
   }
