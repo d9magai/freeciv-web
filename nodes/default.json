@@ -3,7 +3,9 @@
     "recipe[apt]",
     "recipe[packages]",
     "recipe[pip]",
-    "recipe[db]"
+    "recipe[db]",
+    "recipe[migration]",
+    "recipe[configurations]"
   ],
   "automatic": {
     "ipaddress": "default"
