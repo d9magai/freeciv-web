@@ -8,7 +8,8 @@
     "recipe[configurations]",
     "recipe[nginx]",
     "recipe[tomcat]",
-    "recipe[casperjs]"
+    "recipe[casperjs]",
+    "recipe[freeciv]"
   ],
   "casperjs": {
     "version": "1.1.3"
