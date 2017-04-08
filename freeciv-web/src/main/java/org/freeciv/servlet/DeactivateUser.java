@@ -17,6 +17,8 @@
  *******************************************************************************/
 package org.freeciv.servlet;
 
+import org.apache.commons.codec.digest.Crypt;
+
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -39,8 +41,13 @@ public class DeactivateUser extends HttpServlet {
 			throws IOException, ServletException {
 
 		String username = request.getParameter("username");
-		String password = request.getParameter("password");
+		String secure_password = java.net.URLDecoder.decode(request.getParameter("sha_password"), "UTF-8");
 
+		if (username == null || username.length() <= 2) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Invalid username. Please try again with another username.");
+			return;
+		}
 
 		Connection conn = null;
 		try {
@@ -48,17 +55,40 @@ public class DeactivateUser extends HttpServlet {
 			DataSource ds = (DataSource) env.lookup("jdbc/freeciv_mysql");
 			conn = ds.getConnection();
 
-			String query = "UPDATE auth SET activated = '0' WHERE username = ? AND password = ?";
-			PreparedStatement preparedStatement = conn.prepareStatement(query);
-			preparedStatement.setString(1, username);
-			preparedStatement.setString(2, password);
-			int no_updated = preparedStatement.executeUpdate();
-			if (no_updated == 1) { 
-				response.getOutputStream().print("OK!");
+			// Salted, hashed password.
+			String saltHashQuery =
+					"SELECT secure_hashed_password "
+							+ "FROM auth "
+							+ "WHERE LOWER(username) = LOWER(?) "
+							+ "	AND activated = '1' LIMIT 1";
+			PreparedStatement ps1 = conn.prepareStatement(saltHashQuery);
+			ps1.setString(1, username);
+			ResultSet rs1 = ps1.executeQuery();
+			if (!rs1.next()) {
+				response.getOutputStream().print("Failed");
+				return;
 			} else {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable to deactivate user.");
-			}
+				String hashedPasswordFromDB = rs1.getString(1);
+				if (hashedPasswordFromDB.equals(Crypt.crypt(secure_password, hashedPasswordFromDB))) {
 
+					String query = "UPDATE auth SET activated = '0' WHERE username = ? ";
+					PreparedStatement preparedStatement = conn.prepareStatement(query);
+					preparedStatement.setString(1, username);
+					int no_updated = preparedStatement.executeUpdate();
+					if (no_updated == 1) {
+						response.getOutputStream().print("OK!");
+					} else {
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+								"Invalid username or password.");
+						return;
+					}
+
+				} else {
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+							"Invalid username or password.");
+					return;
+				}
+			}
 
 		} catch (Exception err) {
 			response.setHeader("result", "error");

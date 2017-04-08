@@ -631,7 +631,7 @@ function dir_get_tileset_name(dir)
     return "w";
   case DIR8_NORTHWEST:
     return "nw";
-  };
+  }
 
   return "";
 }
@@ -1013,7 +1013,7 @@ function fill_fog_sprite_array(ptile, pedge, pcorner)
 	    case TILE_UNKNOWN:
 	      value = unknown;
 	      break;
-      };
+      }
     }
     tileno = tileno * 3 + value;
   }
@@ -1077,13 +1077,13 @@ function get_tile_river_sprite(ptile)
     return null;
   }
 
-  if (tile_has_extra(ptile, ROAD_RIVER)) {
+  if (tile_has_extra(ptile, EXTRA_RIVER)) {
     var river_str = "";
     for (var i = 0; i < num_cardinal_tileset_dirs; i++) {
       var dir = cardinal_tileset_dirs[i];
       var checktile = mapstep(ptile, dir);
       if (checktile
-          && (tile_has_extra(checktile, ROAD_RIVER) || is_ocean_tile(checktile))) {
+          && (tile_has_extra(checktile, EXTRA_RIVER) || is_ocean_tile(checktile))) {
         river_str = river_str + dir_get_tileset_name(dir) + "1";
       } else {
         river_str = river_str + dir_get_tileset_name(dir) + "0";
@@ -1098,7 +1098,7 @@ function get_tile_river_sprite(ptile)
     for (var i = 0; i < num_cardinal_tileset_dirs; i++) {
       var dir = cardinal_tileset_dirs[i];
       var checktile = mapstep(ptile, dir);
-      if (checktile != null && tile_has_extra(checktile, ROAD_RIVER)) {
+      if (checktile != null && tile_has_extra(checktile, EXTRA_RIVER)) {
         return {"key" : "road.river_outlet_" + dir_get_tileset_name(dir)};
       }
     }
@@ -1229,24 +1229,6 @@ function get_technology_image_sprite(ptech)
 /****************************************************************************
  ...
 ****************************************************************************/
-function get_player_flag_url(pplayer)
-{
-  var pnation = nations[pplayer['nation']];
-
-  return "/images/flags/" + pnation['graphic_str'] + "-web.png"
-}
-
-/****************************************************************************
- ...
-****************************************************************************/
-function get_nation_flag_url(pnation)
-{
-  return "/images/flags/" + pnation['graphic_str'] + "-web.png"
-}
-
-/****************************************************************************
- ...
-****************************************************************************/
 function get_nation_flag_sprite(pnation)
 {
   var tag = "f." + pnation['graphic_str'];
@@ -1316,8 +1298,8 @@ function get_treaty_disagree_thumb_down()
 ****************************************************************************/
 function fill_road_rail_sprite_array(ptile, pcity)
 {
-  var road = tile_has_extra(ptile, ROAD_ROAD);
-  var rail = tile_has_extra(ptile, ROAD_RAIL);
+  var road = tile_has_extra(ptile, EXTRA_ROAD);
+  var rail = tile_has_extra(ptile, EXTRA_RAIL);
   var road_near = [];
   var rail_near = [];
   var draw_rail = [];
@@ -1331,8 +1313,8 @@ function fill_road_rail_sprite_array(ptile, pcity)
     /* Check if there is adjacent road/rail. */
     var tile1 = mapstep(ptile, dir);
     if (tile1 != null && tile_get_known(tile1) != TILE_UNKNOWN) {
-      road_near[dir] = tile_has_extra(tile1, ROAD_ROAD);
-      rail_near[dir] = tile_has_extra(tile1, ROAD_RAIL);
+      road_near[dir] = tile_has_extra(tile1, EXTRA_ROAD);
+      rail_near[dir] = tile_has_extra(tile1, EXTRA_RAIL);
 
       /* Draw rail/road if there is a connection from this tile to the
         * adjacent tile.  But don't draw road if there is also a rail
@@ -1414,7 +1396,7 @@ function fill_layer1_sprite_array(ptile, pcity)
 
   /* We don't draw the bases if there's a city */
   if (pcity == null) {
-    if (tile_has_extra(ptile, BASE_FORTRESS)) {
+    if (tile_has_extra(ptile, EXTRA_FORTRESS)) {
       result_sprites.push({"key" : "base.fortress_bg",
                            "offset_y" : -normal_tile_height / 2});
     }
@@ -1432,11 +1414,11 @@ function fill_layer2_sprite_array(ptile, pcity)
 
   /* We don't draw the bases if there's a city */
   if (pcity == null) {
-    if (tile_has_extra(ptile, BASE_AIRBASE)) {
+    if (tile_has_extra(ptile, EXTRA_AIRBASE)) {
       result_sprites.push({"key" : "base.airbase_mg",
                            "offset_y" : -normal_tile_height / 2});
     }
-    if (tile_has_extra(ptile, BASE_BUOY)) {
+    if (tile_has_extra(ptile, EXTRA_BUOY)) {
       result_sprites.push(get_base_flag_sprite(ptile));
       result_sprites.push({"key" : "base.buoy_mg",
                            "offset_y" : -normal_tile_height / 2});
@@ -1459,7 +1441,7 @@ function fill_layer3_sprite_array(ptile, pcity)
 
   /* We don't draw the bases if there's a city */
   if (pcity == null) {
-    if (tile_has_extra(ptile, BASE_FORTRESS)) {
+    if (tile_has_extra(ptile, EXTRA_FORTRESS)) {
       result_sprites.push({"key" : "base.fortress_fg",
                            "offset_y" : -normal_tile_height / 2});
     }
@@ -1525,11 +1507,11 @@ function deduplicate_player_colors()
 {
   for (var player_id in players) {
     var cplayer = players[player_id];
-    var cnation = nations[cplayer['nation']]
+    var cnation = nations[cplayer['nation']];
     var pcolor = cnation['color'];
     for (var splayer_id in players) {
       var splayer = players[splayer_id];
-      var snation = nations[splayer['nation']]
+      var snation = nations[splayer['nation']];
       var scolor = snation['color'];
       if (splayer_id != player_id && is_color_collision(pcolor, scolor)) {
         cnation['color'] = "rgb(" + get_random_int(80,255)  + "," + get_random_int(80,200) + ","

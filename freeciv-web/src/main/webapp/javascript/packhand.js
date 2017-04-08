@@ -207,6 +207,7 @@ function handle_chat_msg(packet)
     add_chatbox_text("<b>" + username + ":</b>" + message);
   } else {
     if (message != null && message.indexOf("/metamessage") != -1) return;  //don't spam message dialog on game start.
+    if (message != null && message.indexOf("Metaserver message string") != -1) return;  //don't spam message dialog on game start.
     if (packet['event'] == 45) {
       var regxp = /\n/gi;
       message = message.replace(regxp, "<br>\n");
@@ -1298,10 +1299,21 @@ function handle_player_diplstate(packet)
   }
 }
 
+/**************************************************************************
+  Packet handle_ruleset_extra handler. Also defines EXTRA_* variables
+  dynamically.
+**************************************************************************/
 function handle_ruleset_extra(packet)
 {
   extras[packet['id']] = packet;
   extras[packet['name']] = packet;
+
+  window["EXTRA_" + packet['name'].toUpperCase()] = packet['id'];
+
+  if (packet['name'] == "Railroad") window["EXTRA_RAIL"] = packet['id'];
+  if (packet['name'] == "Oil") window["EXTRA_OIL_WELL"] = packet['id'];
+  if (packet['name'] == "Minor Tribe Village") window["EXTRA_HUT"] = packet['id'];
+
 }
 
 /**************************************************************************

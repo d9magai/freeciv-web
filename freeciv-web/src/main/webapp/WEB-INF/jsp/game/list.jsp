@@ -21,6 +21,9 @@
 				$("#play-by-email-table").hide();
 				return;
 			}
+
+			$($($(".nav-tabs").children()[2]).children()[0]).html("Play-By-Email (" + data.length + ")");
+
 			data.reverse().forEach(function (game) {
 				var turn = game[0];
 				var phase = game[1];
@@ -39,7 +42,8 @@
 				if (players.indexOf("@") >= 0) {
 					return;
 				};
-				
+
+				if (players.length > 100) players = players.substring(0, 100) + "...";
 				
 				$("#play-by-email-table").append(
 					'<tr>' +
@@ -116,7 +120,7 @@
 		font-weight: bold;
 	}
 	#multiplayer-table td:last-child {
-		width: 140px;
+		width: 290px;
 	}
 	#singleplayer-table td:last-child {
 		width: 140px;
@@ -168,7 +172,7 @@
 							<tr>
 								<th>Flag</th>
 								<th>Player</th>
-								<th class="hidden-xs">Message</th>
+								<th class="hidden-xs">Game details</th>
 								<th class="hidden-xs">Players</th>
 								<th class="hidden-xs">Turn</th>
 								<th>Action</th>
@@ -237,9 +241,12 @@
 													Play</a>
 											</c:when>
 											<c:otherwise>
+                                                <a class="label label-success label-lg"
+													href="/webclient?action=multi&amp;civserverport=${game.port}&amp;civserverhost=${game.host}&amp;multi=true">
+													Play 2D</a>
 												<a class="label label-success label-lg"
 													href="/webclient?action=observe&amp;civserverport=${game.port}&amp;civserverhost=${game.host}&amp;multi=true">
-													2D</a>
+													Observe 2D</a>
 												<a class="label label-success label-lg"
 													href="/webclient?renderer=webgl&amp;action=observe&amp;civserverport=${game.port}&amp;civserverhost=${game.host}&amp;multi=true">
 													3D</a>

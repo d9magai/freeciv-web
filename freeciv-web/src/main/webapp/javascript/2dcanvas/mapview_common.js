@@ -353,6 +353,9 @@ function update_map_canvas(canvas_x, canvas_y, width, height)
         if ((ptile_xi + ptile_yi) % 2 != 0) {
           continue;
         }
+
+        if (map['topology_id'] == 0 && (ptile_si <= 0 || ((ptile_si / 4)) > map['xsize'])) continue;  // skip if flat earth without wrapping.
+
         if (ptile_xi % 2 == 0 && ptile_yi % 2 == 0) {
           if ((ptile_xi + ptile_yi) % 4 == 0) {
             /* Tile */
@@ -516,7 +519,15 @@ function update_map_canvas_check()
   if (time > MAPVIEW_REFRESH_INTERVAL && renderer == RENDERER_2DCANVAS) {
     update_map_canvas_full();
   }
-  if (renderer == RENDERER_2DCANVAS) requestAnimationFrame(update_map_canvas_check);
+  try {
+    if (renderer == RENDERER_2DCANVAS && window.requestAnimationFrame != null) requestAnimationFrame(update_map_canvas_check);
+  } catch (e) {
+    if (e.name == 'NS_ERROR_NOT_AVAILABLE') {
+      setTimeout(update_map_canvas_check, 100);
+    } else {
+      throw e;
+    }
+  }
 
 }
 

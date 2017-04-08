@@ -24,6 +24,8 @@ var plane, cube;
 var mouse, raycaster, isShiftDown = false;
 var directionalLight;
 var activeUnitLight;
+var clock;
+var webgl_controls;
 
 var terrainVertShader;
 var terrainFragShader;
@@ -34,6 +36,7 @@ var tiletype_terrains = ["lake","coast","floor","arctic","desert","forest","gras
 
 var landGeometry;
 var landMesh;
+var unknown_terrain_mesh;
 var unknownTerritoryGeometry;
 var fogOfWarGeometry;
 var water;
@@ -69,6 +72,8 @@ function webgl_start_renderer()
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
 
+  clock = new THREE.Clock();
+
   // Lights
   var ambientLight = new THREE.AmbientLight( 0x606060, 1.0 );
   scene.add(ambientLight);
@@ -91,7 +96,7 @@ function webgl_start_renderer()
   }
 
   if (is_small_screen()) {
-    camera_dy = 380;
+    camera_dy = 390;
     camera_dx = 180;
     camera_dz = 180;
   }
@@ -146,7 +151,7 @@ function init_webgl_mapview() {
         alpha: 	0.7,
         sunDirection: directionalLight.position.clone().normalize(),
         sunColor: 0xfaf100,
-        waterColor: 0x003485,
+        waterColor: 0x003e7b,
         distortionScale: 30.0,
         fog: false
     } );
@@ -253,10 +258,10 @@ function init_webgl_mapview() {
     if (y == yquality - 1) unknownTerritoryGeometry.vertices[ i ].z += 50;
   }
   unknownTerritoryGeometry.computeVertexNormals();
-  var unknownMesh = new THREE.Mesh( unknownTerritoryGeometry, darkness_material );
-  unknownMesh.geometry.dynamic = true;
-  scene.add(unknownMesh);
-
+  unknown_terrain_mesh = new THREE.Mesh( unknownTerritoryGeometry, darkness_material );
+  unknown_terrain_mesh.geometry.dynamic = true;
+  if (!observing) scene.add(unknown_terrain_mesh);
+  setTimeout(check_remove_unknown_territory, 120000);
 
   // Fog of war
   fogOfWarGeometry = new THREE.PlaneGeometry(mapview_model_width, mapview_model_height, xquality - 1, yquality - 1);
@@ -278,10 +283,10 @@ function init_webgl_mapview() {
     if (y == yquality - 1) fogOfWarGeometry.vertices[ i ].z += 50;
   }
   fogOfWarGeometry.computeVertexNormals();
-  var fogOfWar_material = new THREE.MeshLambertMaterial({color: 0x000000, transparent: true, opacity: 0.4});
-  var fogOfWarMesh = new THREE.Mesh( fogOfWarGeometry, fogOfWar_material );
-  fogOfWarMesh.geometry.dynamic = true;
-  scene.add(fogOfWarMesh);
+  var fogOfWar_material = new THREE.MeshLambertMaterial({color: 0x000000, transparent: true, opacity: 0.5});
+  var fog_of_war_mesh = new THREE.Mesh( fogOfWarGeometry, fogOfWar_material );
+  fog_of_war_mesh.geometry.dynamic = true;
+  if (!observing) scene.add(fog_of_war_mesh);
 
   // cleanup
   heightmap = {};
@@ -291,6 +296,10 @@ function init_webgl_mapview() {
   webgl_textures = {};
   $.unblockUI();
   console.log("init_webgl_mapview took: " + (new Date().getTime() - start_webgl) + " ms.");
+
+  benchmark_start = new Date().getTime();
+  setTimeout(initial_benchmark_check, 10000);
+
 }
 
 /****************************************************************************
@@ -327,7 +336,9 @@ function animate() {
 
   if (goto_active) check_request_goto_path();
   if (stats != null) stats.end();
-  if (benchmark_enabled) benchmark_frames_count++;
+  if (initial_benchmark_enabled || benchmark_enabled) benchmark_frames_count++;
+
+  if (webgl_controls != null && clock != null) webgl_controls.update(clock.getDelta());
 
   if (renderer == RENDERER_WEBGL) requestAnimationFrame(animate);
 

@@ -50,7 +50,6 @@ function set_client_state(newstate)
       set_client_page(PAGE_GAME);
       setup_window_size();
 
-      if (observing) center_tile_mapcanvas(map_pos_to_tile(15,15));
       update_metamessage_on_gamestart();
 
       if (is_pbem()) {
@@ -60,14 +59,19 @@ function set_client_state(newstate)
         }, 1500);
       }
 
-      if (ruleset_control['name'] == "Civ2Civ3 ruleset") {
-        ROAD_ROAD = ROAD_ROAD_CIV2CIV3;
-      }
       /* remove context menu from pregame. */
       $(".context-menu-root").remove();
 
       if (renderer == RENDERER_WEBGL) {
         init_webgl_mapview();
+      }
+
+      if (observing || $.getUrlVar('action') == "multi") {
+        var ptile = map_pos_to_tile(15,15);
+        if (ptile != null) {
+          center_tile_mapcanvas(ptile);
+          advance_unit_focus();
+        }
       }
 
       break;
@@ -293,7 +297,7 @@ function show_endgame_dialog()
 
 
 /**************************************************************************
-
+ Updates message on the metaserver on gamestart.
 **************************************************************************/
 function update_metamessage_on_gamestart()
 {
@@ -303,6 +307,7 @@ function update_metamessage_on_gamestart()
     var pplayer = client.conn.playing;
     var metasuggest = username + " ruler of the " + nations[pplayer['nation']]['adjective'] + ".";
     send_message("/metamessage " + metasuggest);
+    setInterval(update_metamessage_game_running_status, 200000);
   }
 
   if ($.getUrlVar('action') == "new" || $.getUrlVar('action') == "earthload" 
@@ -321,7 +326,21 @@ function update_metamessage_on_gamestart()
     $.post("/freeciv_time_played_stats?type=hotseat").fail(function() {});
     send_message("/metamessage hotseat game" );
   }
+}
 
+/**************************************************************************
+ Updates message on the metaserver during a game.
+**************************************************************************/
+function update_metamessage_game_running_status()
+{
+  if (client.conn.playing != null && !metamessage_changed) {
+    var pplayer = client.conn.playing;
+    var metasuggest = nations[pplayer['nation']]['adjective'] + " | " + (governments[client.conn.playing['government']] != null ? governments[client.conn.playing['government']]['name'] : "-")
+         + " | People:" + civ_population(client.conn.playing.playerno)
+         + " | Score:" + pplayer['score'] + " | " + "Research:" + (techs[client.conn.playing['researching']] != null ? techs[client.conn.playing['researching']]['name'] : "-" );
+    send_message("/metamessage " + metasuggest);
+
+  }
 
 }
 

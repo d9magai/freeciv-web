@@ -27,21 +27,21 @@ var webgl_materials = {};
 var model_filenames = ["AEGIS Cruiser",     "city_european_1",  "Helicopter",    "Pikemen",
                        "Alpine Troops",     "city_european_2",  "Horsemen",      "Rail",
                        "Archers",           "citywalls",        "Howitzer",      "Riflemen",
-                       "Armor",             "Coal",             "Hut",           "Road",
+                       "Armor",             /*"Coal",*/         "Hut",           "Road",
                        "Artillery",         "Cruise Missile",   "Ironclad",      "Settlers",
-                       "AWACS",             "Cruiser",          "Iron",          "Spice",
+                       "AWACS",             "Cruiser",          /*"Iron",*/      /*"Spice",*/
                        "Barbarian Leader",  "Destroyer",        "Irrigation",    "Spy",
                        "Battleship",        "Diplomat",         "Knights",       "Stealth Bomber",
                        "Bomber",            "Dragoons",         "Legion",        "Submarine",
-                       "Buffalo",           "Engineers",        "Marines",       "Transport",
+                       /*"Buffalo",*/       "Engineers",        "Marines",       "Transport",
                        "Cannon",            "Explorer",         "Mech. Inf.",    "Trireme",
                        "Caravan",           "Fighter",          "Mine",          "Warriors",
                        "Caravel",           "Fish",             "Musketeers",    "Whales",
-                       "Carrier",           "Freight",          "Nuclear",       "Wheat",
-                       "Catapult",          "Frigate",          "Oil",           "Wine",
-                       "Cavalry",           "Fruit",            "Paratroopers",  "Workers",
+                       "Carrier",           "Freight",          "Nuclear",       /*"Wheat",*/
+                       "Catapult",          "Frigate",          /*"Oil",*/       /*"Wine",*/
+                       "Cavalry",           /*"Fruit",*/        "Paratroopers",  "Workers",
                        "Chariot",           "Galleon",          "Partisan",
-                       "city_european_0",   "Gold",             "Phalanx"
+                       "city_european_0",   /*"Gold",*/         "Phalanx"
                       ];
 
 /****************************************************************************
@@ -201,16 +201,23 @@ function load_model(filename)
   binLoader.load( url, function(geometry, materials) {
    // 30% to 100%, 3d models.
    $("#download_progress").html(" 3D models " + Math.floor(30 + (0.7 * 100 * load_count / total_model_count)) + "%");
-   // Convert from Geometry to BufferGeometry, since that will be faster and use less memory.
-   var bufgeometry = new THREE.BufferGeometry();
-   bufgeometry.fromGeometry(geometry);
-   geometry.dispose();
-   geometry = null;
    for (var i = 0; i < materials.length; i++) {
      materials[i].side = THREE.DoubleSide;
    }
+   var mesh;
+   if (graphics_quality == QUALITY_LOW) {
+     // Convert from Geometry to BufferGeometry, since that will be faster and use less memory.
+     // but it does not have as good looking surface.
+     var bufgeometry = new THREE.BufferGeometry();
+     bufgeometry.fromGeometry(geometry);
+     geometry.dispose();
+     geometry = null;
+     mesh = new THREE.Mesh(bufgeometry, materials );
+   } else {
+     geometry.computeVertexNormals();
+     mesh = new THREE.Mesh(geometry, materials );
+   }
 
-   var mesh = new THREE.Mesh(bufgeometry, materials );
    mesh.scale.x = mesh.scale.y = mesh.scale.z = 11;
    webgl_models[filename] = mesh;
    load_count++;
@@ -235,17 +242,16 @@ function webgl_get_model(filename)
 }
 
 /****************************************************************************
- Returns a flag mesh
+ Returns a flag shield mesh
 ****************************************************************************/
-function get_flag_mesh(key)
+function get_flag_shield_mesh(key)
 {
   if (meshes[key] != null) return meshes[key].clone();
-  if (sprites[key] == null || key.substring(0,2) != "f.") {
-    console.log("Invalid flag key: " + key);
+  if (sprites[key] == null || key.substring(0,8) != "f.shield") {
+    console.log("Invalid flag shield key: " + key);
     return null;
   }
 
-  var flagGeometry = new THREE.PlaneBufferGeometry( 14, 10 );
   /* resize flag to 32x16, since that is required by Three.js*/
   var fcanvas = document.createElement("canvas");
   fcanvas.width = 32;
@@ -255,7 +261,31 @@ function get_flag_mesh(key)
                 sprites[key].width, sprites[key].height,
                 0,0,32,16);
 
-  meshes[key] = canvas_to_user_facing_mesh(fcanvas, 32, 26, 13, false);
+  meshes[key] = canvas_to_user_facing_mesh(fcanvas, 32, 12, 13, true);
+  return meshes[key].clone();
+
+}
+
+/****************************************************************************
+ Returns a extra mesh
+****************************************************************************/
+function get_extra_mesh(key)
+{
+  if (meshes[key] != null) return meshes[key].clone();
+  if (sprites[key] == null ) {
+    console.log("Invalid extra key: " + key);
+    return null;
+  }
+
+  var ecanvas = document.createElement("canvas");
+  ecanvas.width = 64;
+  ecanvas.height = 32;
+  var econtext = ecanvas.getContext("2d");
+  econtext.drawImage(sprites[key], 0, 0,
+                sprites[key].width, sprites[key].height,
+                0,0,64,32);
+
+  meshes[key] = canvas_to_user_facing_mesh(ecanvas, 64, 35, 23, true);
   return meshes[key].clone();
 
 }

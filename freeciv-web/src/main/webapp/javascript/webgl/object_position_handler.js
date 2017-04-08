@@ -92,9 +92,9 @@ function update_unit_position(ptile) {
       pos = map_to_scene_coords(ptile['x'], ptile['y']);
     }
     new_unit.matrixAutoUpdate = false
-    new_unit.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x']);
-    new_unit.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height);
-    new_unit.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y']);
+    new_unit.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 4);
+    new_unit.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height - 2);
+    new_unit.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 4);
     new_unit.rotateOnAxis(new THREE.Vector3(0,1,0).normalize(), (convert_unit_rotation(visible_unit['facing']) * Math.PI * 2 / 8));
     new_unit.updateMatrix();
 
@@ -102,36 +102,20 @@ function update_unit_position(ptile) {
       scene.add(new_unit);
     }
     /* add flag. */
-    var pflag = get_unit_nation_flag_normal_sprite(visible_unit);
+    var pflag = get_unit_nation_flag_sprite(visible_unit);
     var new_flag;
     if (unit_flag_positions[ptile['index']] == null) {
-      new_flag = get_flag_mesh(pflag['key']);
+      new_flag = get_flag_shield_mesh(pflag['key']);
       new_flag.matrixAutoUpdate = false;
       unit_flag_positions[ptile['index']] = new_flag;
       new_flag.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 10);
-      new_flag.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 16);
+      new_flag.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 20);
       new_flag.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 10);
       new_flag.rotation.y = Math.PI / 4;
       new_flag.updateMatrix();
       if (scene != null && new_flag != null) {
         scene.add(new_flag);
       }
-    }
-
-    var new_unit_health_bar;
-    if (unit_health_positions[ptile['index']] == null) {
-      new_unit_health_bar = get_unit_health_mesh(visible_unit);
-      new_unit_health_bar.matrixAutoUpdate = false;
-      unit_health_positions[ptile['index']] = new_unit_health_bar;
-      new_unit_health_bar.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 10);
-      new_unit_health_bar.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 23);
-      new_unit_health_bar.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 10);
-      new_unit_health_bar.rotation.y = Math.PI / 4;
-      new_unit_health_bar.updateMatrix();
-      if (scene != null && new_unit_health_bar != null) {
-        scene.add(new_unit_health_bar);
-      }
-      unit_healthpercentage_positions[ptile['index']] = visible_unit['hp'];
     }
 
     /* indicate focus unit*/
@@ -153,7 +137,7 @@ function update_unit_position(ptile) {
       }
     }
 
-    anim_objs[visible_unit['id']] = {'unit' : visible_unit['id'], 'mesh' : new_unit, 'flag' : new_flag, 'health_bar' : new_unit_health_bar};
+    anim_objs[visible_unit['id']] = {'unit' : visible_unit['id'], 'mesh' : new_unit, 'flag' : new_flag};
 
 
   } else if (unit_positions[ptile['index']] != null && visible_unit != null) {
@@ -175,8 +159,6 @@ function update_unit_position(ptile) {
     if (scene != null && unit_flag_positions[ptile['index']] != null) scene.remove(unit_flag_positions[ptile['index']]);
     delete unit_flag_positions[ptile['index']];
 
-    if (scene != null && unit_health_positions[ptile['index']] != null) scene.remove(unit_health_positions[ptile['index']]);
-    delete unit_health_positions[ptile['index']];
 
     var activity;
     if (unit_activities_positions[ptile['index']] != get_unit_activity_text(visible_unit) && visible_unit['anim_list'].length == 0) {
@@ -199,13 +181,13 @@ function update_unit_position(ptile) {
     }
 
     var new_unit_health_bar;
-    if (unit_healthpercentage_positions[ptile['index']] != visible_unit['hp']) {
+    if (unit_healthpercentage_positions[ptile['index']] != visible_unit['hp'] && visible_unit['anim_list'].length == 0) {
       if (scene != null && unit_health_positions[ptile['index']] != null) scene.remove(unit_health_positions[ptile['index']]);
       new_unit_health_bar = get_unit_health_mesh(visible_unit);
       new_unit_health_bar.matrixAutoUpdate = false;
       unit_health_positions[ptile['index']] = new_unit_health_bar;
       new_unit_health_bar.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 10);
-      new_unit_health_bar.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 23);
+      new_unit_health_bar.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 26);
       new_unit_health_bar.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 10);
       new_unit_health_bar.rotation.y = Math.PI / 4;
       new_unit_health_bar.updateMatrix();
@@ -245,9 +227,9 @@ function update_unit_position(ptile) {
     unit_positions[ptile['index']]['unit_type'] = unit_type_name;
 
     new_unit.matrixAutoUpdate = false
-    new_unit.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x']);
-    new_unit.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height);
-    new_unit.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y']);
+    new_unit.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 4);
+    new_unit.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height - 2);
+    new_unit.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 4);
     new_unit.rotateOnAxis(new THREE.Vector3(0,1,0).normalize(), (convert_unit_rotation(visible_unit['facing']) * Math.PI * 2 / 8));
     new_unit.updateMatrix();
 
@@ -256,14 +238,14 @@ function update_unit_position(ptile) {
     }
 
     /* add flag. */
-    var pflag = get_unit_nation_flag_normal_sprite(visible_unit);
+    var pflag = get_unit_nation_flag_sprite(visible_unit);
     var new_flag;
     if (unit_flag_positions[ptile['index']] == null) {
-      new_flag = get_flag_mesh(pflag['key']);
+      new_flag = get_flag_shield_mesh(pflag['key']);
       new_flag.matrixAutoUpdate = false;
       unit_flag_positions[ptile['index']] = new_flag;
       new_flag.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 10);
-      new_flag.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 16);
+      new_flag.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 20);
       new_flag.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 10);
       new_flag.rotation.y = Math.PI / 4;
       new_flag.updateMatrix();
@@ -272,7 +254,7 @@ function update_unit_position(ptile) {
       }
     }
 
-    anim_objs[visible_unit['id']] = {'unit' : visible_unit['id'], 'mesh' : new_unit, 'flag' : new_flag, 'health_bar' : new_unit_health_bar};
+    anim_objs[visible_unit['id']] = {'unit' : visible_unit['id'], 'mesh' : new_unit, 'flag' : new_flag};
   }
 
 }
@@ -284,6 +266,7 @@ function update_city_position(ptile) {
   if (renderer != RENDERER_WEBGL) return;
 
   var pcity = tile_city(ptile);
+  var punits = tile_units(ptile);
 
   var height = 5 + ptile['height'] * 100;
 
@@ -334,7 +317,9 @@ function update_city_position(ptile) {
     city_label.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 35);
     city_label.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 5);
     city_label.rotation.y = Math.PI / 4;
+    pcity['webgl_label_hash'] = pcity['name'] + pcity['size'] + pcity['production_value'] + punits.length;
     if (scene != null) scene.add(city_label);
+    return;
   }
 
   if (city_positions[ptile['index']] != null && pcity != null) {
@@ -373,15 +358,20 @@ function update_city_position(ptile) {
       city_walls_positions[ptile['index']] = city_walls;
     }
 
-    if (scene != null) scene.remove(city_label_positions[ptile['index']]);
-    delete city_label_positions[ptile['index']];
-    var city_label = create_city_label(pcity);
-    city_label_positions[ptile['index']] = city_label;
-    city_label.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] + 5);
-    city_label.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 35);
-    city_label.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 5);
-    city_label.rotation.y = Math.PI / 4;
-    if (scene != null) scene.add(city_label);
+    if (pcity['webgl_label_hash'] != pcity['name'] + pcity['size'] + pcity['production_value'] + punits.length) {
+      if (scene != null) {
+        scene.remove(city_label_positions[ptile['index']]);
+      }
+      delete city_label_positions[ptile['index']];
+      var city_label = create_city_label(pcity);
+      city_label_positions[ptile['index']] = city_label;
+      city_label.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] + 5);
+      city_label.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 35);
+      city_label.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 5);
+      city_label.rotation.y = Math.PI / 4;
+      pcity['webgl_label_hash'] = pcity['name'] + pcity['size'] + pcity['production_value'] + punits.length;
+      if (scene != null) scene.add(city_label);
+    }
 
   }
 
@@ -423,13 +413,13 @@ function update_tile_extras(ptile) {
     }
   }
 
-  if (scene != null && road_positions[ptile['index']] == null && tile_has_extra(ptile, ROAD_ROAD)) {
+  if (scene != null && road_positions[ptile['index']] == null && tile_has_extra(ptile, EXTRA_ROAD)) {
     var road_added = false;
     var pos = map_to_scene_coords(ptile['x'], ptile['y']);
     // 1. iterate over adjacent tiles, see if they have road.
     for (var dir = 0; dir < 8; dir++) {
       var checktile = mapstep(ptile, dir);
-      if (checktile != null && tile_has_extra(checktile, ROAD_ROAD)) {
+      if (checktile != null && tile_has_extra(checktile, EXTRA_ROAD)) {
         // if the road wraps the map edge, then skip it.
         if ((ptile['x'] == 0 && checktile['x'] == map['xsize'] -1)
             ||  (ptile['x'] == map['xsize'] -1 && checktile['x'] == 0)) continue;
@@ -464,6 +454,7 @@ function update_tile_extras(ptile) {
         road.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 10);
         scene.add(road);
         road_positions[ptile['index']] = road;
+        if (Math.random() >= 0.5) break;
       }
     }
 
@@ -482,7 +473,7 @@ function update_tile_extras(ptile) {
   }
 
 
-  if (scene != null && road_positions[ptile['index']] == null && tile_has_extra(ptile, ROAD_RAIL)) {
+  if (scene != null && road_positions[ptile['index']] == null && tile_has_extra(ptile, EXTRA_RAIL)) {
     var rail_added = false;
     var pos = map_to_scene_coords(ptile['x'], ptile['y']);
 
@@ -493,7 +484,7 @@ function update_tile_extras(ptile) {
     // 1. iterate over adjacent tiles, see if they have rail.
     for (var dir = 0; dir < 8; dir++) {
       var checktile = mapstep(ptile, dir);
-      if (checktile != null && tile_has_extra(checktile, ROAD_RAIL)) {
+      if (checktile != null && tile_has_extra(checktile, EXTRA_RAIL)) {
         // if the rail wraps the map edge, then skip it.
         if ((ptile['x'] == 0 && checktile['x'] == map['xsize'] -1)
             ||  (ptile['x'] == map['xsize'] -1 && checktile['x'] == 0)) continue;
@@ -546,13 +537,13 @@ function update_tile_extras(ptile) {
   }
 
   /* Rivers */
-  if (scene != null && river_positions[ptile['index']] == null && tile_has_extra(ptile, ROAD_RIVER)) {
+  if (scene != null && river_positions[ptile['index']] == null && tile_has_extra(ptile, EXTRA_RIVER)) {
     var river_added = false;
     var pos = map_to_scene_coords(ptile['x'], ptile['y']);
     // 1. iterate over adjacent tiles, see if they have river.
     for (var dir = 0; dir < 8; dir++) {
       var checktile = mapstep(ptile, dir);
-      if (checktile != null && (tile_has_extra(checktile, ROAD_RIVER) || is_ocean_tile(checktile))) {
+      if (checktile != null && (tile_has_extra(checktile, EXTRA_RIVER) || is_ocean_tile(checktile))) {
         // if the river wraps the map edge, then skip it.
         if ((ptile['x'] == 0 && checktile['x'] == map['xsize'] -1)
             ||  (ptile['x'] == map['xsize'] -1 && checktile['x'] == 0)) continue;
@@ -588,6 +579,7 @@ function update_tile_extras(ptile) {
         scene.add(river);
         river_positions[ptile['index']] = river;
         river_positions[checktile['index']] = river;
+        if (Math.random() >= 0.5) break;
       }
     }
   }
@@ -601,7 +593,7 @@ function update_tile_extras(ptile) {
 
     var pos = map_to_scene_coords(ptile['x'], ptile['y']);
     hut.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x']);
-    hut.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 6);
+    hut.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height);
     hut.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y']);
     if (scene != null && hut != null) {
       scene.add(hut);
@@ -613,26 +605,45 @@ function update_tile_extras(ptile) {
     }
   }
 
+  // Render tile specials (extras). Fish and whales are 3D models, the rest are 2D sprites from the 2D version.
+  // 2D sprites are faster to render and looks better at the moment. Freeciv WebGL 3D needs better 3D models for specials.
   var extra_resource = extras[ptile['resource']];
   if (extra_resource != null && scene != null && tile_extra_positions[extra_resource['id'] + "." + ptile['index']] == null) {
+    if (extra_resource['name'] != "Fish" && extra_resource['name'] != "Whales") {
+      var key = extra_resource['graphic_str'];
+      var extra_mesh = get_extra_mesh(key);
+
+      var pos = map_to_scene_coords(ptile['x'], ptile['y']);
+      extra_mesh.matrixAutoUpdate = false;
+      extra_mesh.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x'] - 6);
+      extra_mesh.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 2);
+      extra_mesh.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y'] - 6);
+      extra_mesh.rotation.y = Math.PI / 4;
+      extra_mesh.updateMatrix();
+
+      tile_extra_positions[extra_resource['id'] + "." + ptile['index']] = extra_mesh;
+      if (scene != null && extra_mesh != null) {
+        scene.add(extra_mesh);
+      }
+    } else {
       var extra_model = webgl_get_model(extra_resource['name']);
       if (extra_model == null) return;
 
-      tile_extra_positions[extra_resource['id'] + "." + ptile['index']] = extra_model;
-
       var pos = map_to_scene_coords(ptile['x'], ptile['y']);
       extra_model.translateOnAxis(new THREE.Vector3(1,0,0).normalize(), pos['x']);
-      extra_model.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height + 3);
+      extra_model.translateOnAxis(new THREE.Vector3(0,1,0).normalize(), height);
       extra_model.translateOnAxis(new THREE.Vector3(0,0,1).normalize(), pos['y']);
 
+      tile_extra_positions[extra_resource['id'] + "." + ptile['index']] = extra_model;
       if (scene != null && extra_model != null) {
         scene.add(extra_model);
       }
+    }
   }
 
   // show forest
   var terrain_name = tile_terrain(ptile).name;
-  if (scene != null
+  if (scene != null && forest_geometry != null
       && tile_get_known(ptile) == TILE_KNOWN_SEEN
       && forest_positions[ptile['index']] == null
       && terrain_name == "Forest") {
@@ -646,7 +657,7 @@ function update_tile_extras(ptile) {
   }
 
   // show jungle
-  if (scene != null
+  if (scene != null && jungle_geometry != null
       && tile_get_known(ptile) == TILE_KNOWN_SEEN
       && jungle_positions[ptile['index']] == null
       && terrain_name == "Jungle") {

@@ -83,6 +83,12 @@ function handle_map_image_upload()
   var fileInput = document.getElementById('mapFileInput');
   var file = fileInput.files[0];
 
+  if (file == null) {
+    $.unblockUI();
+    swal("Please upload a image file!");
+    return;
+  }
+
   if (!(window.FileReader)) {
     $.unblockUI();
     swal("Uploading files not supported");
@@ -138,7 +144,7 @@ function handle_image_ctx(ctx)
  $.ajax({
     type: "POST",
     url: "/freeciv-earth-mapgen",
-    data: savetxt 
+    data: (savetxt + ";" + 120 + ";" + 80)
   }).done(function(savegame) {
     send_message_delayed("/load " + savegame, 1200);
     setTimeout(load_game_toggle, 1300);
