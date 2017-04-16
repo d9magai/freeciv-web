@@ -50,63 +50,16 @@ mysql_pass="vagrant"
 tornado_url="https://github.com/tornadoweb/tornado/archive/v4.4.1.tar.gz"
 casperjs_url="https://github.com/casperjs/casperjs/zipball/1.1.3"
 
-# Based on fresh install of Ubuntu 16.04
-dependencies="maven"
-
-## Setup
-mkdir -p ${basedir}
-cd ${basedir}
-
-debconf-set-selections <<< "mysql-server mysql-server/root_password password ${mysql_pass}"
-debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${mysql_pass}"
-echo "apt-get install dependencies"
-
-pip3 install wikipedia
-
-## build and install mysql-connector-python
-cd /tmp
-wget https://github.com/mysql/mysql-connector-python/archive/2.1.3.zip
-unzip 2.1.3.zip
-cd mysql-connector-python-2.1.3
-python3 setup.py install
-
-## mysql setup
 echo "==== Setting up MySQL ===="
-mysqladmin -u ${mysql_user} -p${mysql_pass} create freeciv_web
-cd ${basedir}/freeciv-web
-cp flyway.properties.dist flyway.properties
-sudo -u $user mvn compile flyway:migrate
-cd -
-
-# configuration files
-dos2unix ${basedir}/scripts/configuration.sh.dist
-sed -e "s/MYSQL_USER=root/MYSQL_USER=${mysql_user}/" -e "s/MYSQL_PASSWORD=changeme/MYSQL_PASSWORD=${mysql_pass}/" ${basedir}/scripts/configuration.sh.dist > ${basedir}/scripts/configuration.sh
-cp ${basedir}/publite2/settings.ini.dist ${basedir}/publite2/settings.ini
-cp ${basedir}/freeciv-web/src/main/webapp/META-INF/context.xml.dist ${basedir}/freeciv-web/src/main/webapp/META-INF/context.xml
-
-dos2unix ${basedir}/scripts/configuration.sh.dist
-sed -e "s/MYSQL_USER=root/MYSQL_USER=${mysql_user}/" -e "s/MYSQL_PASSWORD=changeme/MYSQL_PASSWORD=/" ${basedir}/scripts/configuration.sh.dist > ${basedir}/scripts/configuration.sh
-  
-
-echo "==== Building freeciv ===="
-dos2unix ${basedir}/freeciv/freeciv-web.project
-cd ${basedir}/freeciv && sudo -Hu $user ./prepare_freeciv.sh
-cd freeciv && sudo -u $user make install
+#cd -
 
 echo "==== Building freeciv-web ===="
-cd ${basedir}/scripts/freeciv-img-extract/ && ./setup_links.sh && ./sync.sh
-cd /var/lib/tomcat8 && chmod -R 777 webapps logs && setfacl -d -m g::rwx webapps && chown -R www-data:www-data webapps/
-cp ${basedir}/freeciv-web/src/main/webapp/WEB-INF/config.properties.dist ${basedir}/freeciv-web/src/main/webapp/WEB-INF/config.properties
 cd ${basedir}/scripts && ./sync-js-hand.sh
 cd ${basedir}/freeciv-web && sudo -u $user ./setup.sh
 
 echo "=============================="
 
 cp ${basedir}/pbem/settings.ini.dist ${basedir}/pbem/settings.ini
-
-service nginx stop
-rm /etc/nginx/sites-enabled/default
-cp ${basedir}/publite2/nginx.conf /etc/nginx/
 
 # add Freeciv-web scripts to path
 export PATH=$PATH:/vagrant/scripts
@@ -123,13 +76,10 @@ fi
 echo "============================================"
 echo "Installing CasperJS for testing"
 cd ${basedir}/tests/
-wget ${casperjs_url}
-unzip -qo 1.1.3
-cd casperjs-casperjs-cd78443
-ln -sf `pwd`/bin/casperjs /usr/local/bin/casperjs
 
 echo "Start testing of Freeciv-web using CasperJS:"
 cd ${basedir}/tests/
+export PATH=$PATH:/usr/local/bin
 xvfb-run casperjs --engine=phantomjs test freeciv-web-tests.js || (>&2 echo "Freeciv-web CasperJS tests failed!" && exit 1)
 
 echo "Freeciv-web started! Now try http://localhost/ on your host operating system."
