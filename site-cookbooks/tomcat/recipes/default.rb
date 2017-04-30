@@ -19,6 +19,8 @@ end
   /var/lib/tomcat8/webapps/
   /var/lib/tomcat8/webapps/data/
   /var/lib/tomcat8/webapps/data/savegames
+  /var/lib/tomcat8/webapps/data/scorelogs
+  /var/lib/tomcat8/webapps/data/ranklogs
   /var/lib/tomcat8/webapps/data/savegames/pbem
 ].each do |path|
   directory path do
