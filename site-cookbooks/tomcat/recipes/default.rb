@@ -15,3 +15,16 @@ ruby_block 'set permissions for tomcat dir' do
   action :run
 end
 
+%w[
+  /var/lib/tomcat8/webapps/
+  /var/lib/tomcat8/webapps/data/
+  /var/lib/tomcat8/webapps/data/savegames
+  /var/lib/tomcat8/webapps/data/savegames/pbem
+].each do |path|
+  directory path do
+    owner 'www-data'
+    group 'www-data'
+    mode '0777'
+  end
+end
+
