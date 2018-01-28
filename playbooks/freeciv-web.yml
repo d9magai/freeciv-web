@@ -1,0 +1,8 @@
+---
+- hosts: 127.0.0.1
+  user: vagrant
+  become: yes
+  roles:
+    - packages
+    - pip
+

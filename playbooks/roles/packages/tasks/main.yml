@@ -1,0 +1,39 @@
+######################################################
+# install packages
+######################################################
+  - name: apt install common packages
+    apt: pkg={{ item }} force=yes install_recommends=no update_cache=yes cache_valid_time=3600
+    with_items:
+      - maven
+      - openjdk-8-jdk-headless
+      - libcurl4-openssl-dev
+      - nginx
+      - libjansson-dev
+      - subversion
+      - pngcrush
+      - python3-pillow
+      - libtool
+      - automake
+      - autoconf
+      - autotools-dev
+      - language-pack-en
+      - python-minimal
+      - python3.6-dev
+      - python3-setuptools
+      - libbz2-dev
+      - imagemagick
+      - python3-pip
+      - dos2unix
+      - liblzma-dev
+      - libicu-dev
+      - pkg-config
+      - zlib1g-dev
+      - tomcat8
+      - tomcat8-admin
+      - unzip
+      - zip
+      - libsqlite3-dev
+      - webp
+      - libmagickcore*extra
+      - libmagickwand-dev
+

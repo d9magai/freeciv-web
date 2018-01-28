@@ -1,0 +1,11 @@
+######################################################
+# python requirements
+######################################################
+
+  - name: install global python requirements
+    pip: name={{item}} executable=pip3
+    with_items:
+      - tornado
+      - wikipedia
+      - mysql-connector-python
+
