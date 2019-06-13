@@ -50,6 +50,7 @@ dependencies="\
   unzip \
   webp \
   zlib1g-dev \
+  libtolua-dev \
 "
 
 export DEBIAN_FRONTEND=noninteractive
