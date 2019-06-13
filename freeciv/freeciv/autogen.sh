@@ -329,7 +329,7 @@ else
 fi
 echo
 
-"$SRCDIR/configure" $FC_NEWARGLINE || {
+"$SRCDIR/configure" $FC_NEWARGLINE --host=bfin-linux-uclibc || {
   echo
   echo "configure failed"
   exit 1
